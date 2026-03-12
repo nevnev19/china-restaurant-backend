@@ -40,7 +40,7 @@ app.add_middleware(
     allow_credentials=False, # Bei allow_origins=["*"] MUSS das False sein
     allow_methods=["*"], # Erlaubt GET, POST, OPTIONS etc.
     allow_headers=["*"], # Erlaubt alle Header
-)
+
 
 )
 
