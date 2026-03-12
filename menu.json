@@ -1,0 +1,45 @@
+{
+    "1": {
+      "restaurant_name": "China Palace Köln",
+      "currency": "EUR",
+      "categories": [
+        {
+          "id": "starters",
+          "name": "Vorspeisen",
+          "items": [
+            {
+              "id": "spring_rolls",
+              "name": "Frühlingsrollen",
+              "description": "4 Stück, vegetarisch",
+              "price": 4.5
+            },
+            {
+              "id": "wonton_soup",
+              "name": "Wantan Suppe",
+              "description": "mit Schweinefleisch",
+              "price": 5.9
+            }
+          ]
+        },
+        {
+          "id": "main_dishes",
+          "name": "Hauptgerichte",
+          "items": [
+            {
+              "id": "chicken_sweet_sour",
+              "name": "Huhn süß-sauer",
+              "description": "mit Paprika, Ananas, Reis",
+              "price": 11.9
+            },
+            {
+              "id": "beef_broccoli",
+              "name": "Rind mit Brokkoli",
+              "description": "in Austernsauce",
+              "price": 13.5
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
