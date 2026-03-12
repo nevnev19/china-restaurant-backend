@@ -36,10 +36,12 @@ app = FastAPI(title="China Restaurant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # später einschränken
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"], # Erlaubt Anfragen von allen Domains
+    allow_credentials=False, # Bei allow_origins=["*"] MUSS das False sein
+    allow_methods=["*"], # Erlaubt GET, POST, OPTIONS etc.
+    allow_headers=["*"], # Erlaubt alle Header
+)
+
 )
 
 ORDERS_DB: list[Order] = []
