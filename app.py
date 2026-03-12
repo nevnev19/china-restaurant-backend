@@ -32,16 +32,18 @@ class Order(BaseModel):
     status: str
     created_at: datetime
 
+# ── NEU: Status-Update Model ───────────────────────────────────────────────
+class StatusUpdate(BaseModel):
+    status: str  # 'new' | 'done' | 'canceled'
+
 app = FastAPI(title="China Restaurant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Erlaubt Anfragen von allen Domains
-    allow_credentials=False, # Bei allow_origins=["*"] MUSS das False sein
-    allow_methods=["*"], # Erlaubt GET, POST, OPTIONS etc.
-    allow_headers=["*"], # Erlaubt alle Header
-
-
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 ORDERS_DB: list[Order] = []
@@ -63,26 +65,35 @@ def get_menu(restaurant_id: str):
 def create_order(restaurant_id: str, payload: CreateOrderRequest):
     if payload.restaurant_id != restaurant_id:
         raise HTTPException(status_code=400, detail="restaurant_id passt nicht zur URL")
-
     if not payload.items:
         raise HTTPException(status_code=400, detail="Keine Artikel in der Bestellung")
 
-    order_id = str(uuid.uuid4())
-    total = calculate_total(payload.items)
-
     order = Order(
-        id=order_id,
+        id=str(uuid.uuid4()),
         restaurant_id=restaurant_id,
         items=payload.items,
         customer=payload.customer,
-        total_amount=total,
+        total_amount=calculate_total(payload.items),
         status="pending_payment",
         created_at=datetime.utcnow(),
     )
-
     ORDERS_DB.append(order)
     return order
 
 @app.get("/restaurants/{restaurant_id}/orders", response_model=List[Order])
 def list_orders(restaurant_id: str):
     return [o for o in ORDERS_DB if o.restaurant_id == restaurant_id]
+
+# ── NEU: Status einer Bestellung ändern (für Admin Dashboard) ──────────────
+@app.patch("/restaurants/{restaurant_id}/orders/{order_id}")
+def update_order_status(restaurant_id: str, order_id: str, payload: StatusUpdate):
+    allowed = {"new", "done", "canceled", "pending_payment"}
+    if payload.status not in allowed:
+        raise HTTPException(status_code=400, detail=f"Ungültiger Status. Erlaubt: {allowed}")
+
+    for order in ORDERS_DB:
+        if order.id == order_id and order.restaurant_id == restaurant_id:
+            order.status = payload.status
+            return order
+
+    raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
